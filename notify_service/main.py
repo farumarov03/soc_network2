@@ -3,7 +3,6 @@ import threading
 import uvicorn
 from src.modules.listener_manager import redis_listener
 
-
 def create_application() -> FastAPI:
     application = FastAPI(
         title="SN platform",
@@ -14,8 +13,6 @@ def create_application() -> FastAPI:
     return application
 
 app = create_application()
-
-
 
 @app.on_event("startup")
 def start_redis_listener():

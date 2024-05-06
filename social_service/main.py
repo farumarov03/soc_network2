@@ -31,7 +31,6 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-App"] = "Time took to process the request and return response is {} sec".format(time.time() - start_time)
     return response
 
-
 @app.get('/')
 def index():
     return {"title":"platform API",

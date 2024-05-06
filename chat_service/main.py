@@ -15,7 +15,6 @@ def create_application() -> FastAPI:
     application.include_router(ws_v1.router, prefix='/chat')
     return application
 
-
 app = create_application()
 
 app.add_middleware(
@@ -31,7 +30,6 @@ def index():
     return {"title":"platform API",
     "description":"This API was built with FastAPI.",
     "version":"1.0.0"}
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8003)
