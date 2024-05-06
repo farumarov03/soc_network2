@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Client</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const websocketUrl = "ws://localhost:8003/chat/v1/ws";
+
+            let websocket;
+
+            document.getElementById("connect").onclick = function() {
+                const userId = document.getElementById("userId").value;
+                if (!userId) {
+                    alert("Please enter your user ID.");
+                    return;
+                }
+                if (!websocket || websocket.readyState === WebSocket.CLOSED) {
+                    connectWebSocket(userId);
+                } else {
+                    alert("WebSocket is already connected.");
+                }
+            };
+
+            document.getElementById("send").onclick = function() {
+                const receiverId = document.getElementById("receiverId").value;
+                const message = document.getElementById("message").value;
+                if (!message) {
+                    alert("Please enter a message.");
+                    return;
+                }
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    websocket.send(JSON.stringify({ receiver_id: receiverId, message: message }));
+                } else {
+                    alert("WebSocket is not connected.");
+                }
+            };
+
+            function connectWebSocket(userId) {
+                websocket = new WebSocket(`${websocketUrl}/${userId}`);
+
+                websocket.onopen = function(event) {
+                    console.log("Connected:", event);
+                };
+
+                websocket.onmessage = function(event) {
+                    console.log("Message from server ", event.data);
+                    let messageList = document.getElementById("messages");
+                    let messageItem = document.createElement("li");
+                    messageItem.textContent = event.data;
+                    messageList.appendChild(messageItem);
+                };
+
+                websocket.onerror = function(event) {
+                    console.error("WebSocket error observed:", event);
+                };
+
+                websocket.onclose = function(event) {
+                    console.log("WebSocket is closed now.");
+                };
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>WebSocket Chat Client</h1>
+    <label for="userId">Your User ID:</label>
+    <input type="text" id="userId" placeholder="Enter your user ID" />
+    <button id="connect">Connect</button>
+    <br /><br />
+    <label for="receiverId">Receiver's ID:</label>
+    <input type="text" id="receiverId" placeholder="Enter receiver's ID" />
+    <br /><br />
+    <label for="message">Message:</label>
+    <input type="text" id="message" placeholder="Type a message" />
+    <button id="send">Send Message</button>
+    <ul id="messages"></ul>
+</body>
+</html>
